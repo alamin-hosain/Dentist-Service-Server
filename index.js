@@ -17,6 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 // Mongodb Operation here
 async function run() {
     const ServiceCollection = client.db('DentistServices').collection('service');
+    const AllReviewsCollection = client.db('AllReviews').collection('review');
 
     try {
         // Getting only 3 services
@@ -44,7 +45,25 @@ async function run() {
             res.send(result)
         })
 
+        // Adding Review to the Server
+        app.post('/reviews', async (req, res) => {
+            const review = req.body;
+            console.log(review)
+            const result = await AllReviewsCollection.insertOne(review);
+            res.send(result);
+        })
+
+        // Getting all reviews
+        app.get('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { serviceId: id };
+            const cursor = AllReviewsCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
     }
+
     finally {
 
     }
