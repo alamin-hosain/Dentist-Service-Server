@@ -28,6 +28,15 @@ async function run() {
             res.send(result);
         })
 
+
+        // Adding a Service 
+        app.post('/services/addservice', async (req, res) => {
+            const service = req.body;
+            const result = await ServiceCollection.insertOne(service);
+            res.send(result)
+        })
+
+
         // Getting all Services
         app.get('/servicesall', async (req, res) => {
             const query = {};
@@ -48,7 +57,6 @@ async function run() {
         // Adding Review to the Server
         app.post('/reviews', async (req, res) => {
             const review = req.body;
-            console.log(review)
             const result = await AllReviewsCollection.insertOne(review);
             res.send(result);
         })
@@ -61,6 +69,20 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
         })
+
+        // get service Created By user
+        app.get('/createdservices', async (req, res) => {
+            let query = {};
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
+            const cursor = ServiceCollection.find(query);
+            const services = await cursor.toArray();
+            res.send(services);
+        })
+
 
 
     }
