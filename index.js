@@ -71,7 +71,7 @@ async function run() {
         })
 
         // get service Created By user
-        app.get('/createdservices', async (req, res) => {
+        app.get('/userservice', async (req, res) => {
             let query = {};
             if (req.query.email) {
                 query = {
