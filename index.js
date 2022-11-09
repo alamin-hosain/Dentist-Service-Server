@@ -70,6 +70,59 @@ async function run() {
             res.send(result);
         })
 
+        // Getting specific user review by query email
+        app.get('/userreview', async (req, res) => {
+            let query = {};
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
+            const cursor = AllReviewsCollection.find(query);
+            const userReview = await cursor.toArray();
+            res.send(userReview);
+        })
+
+        // Deleting single review by id 
+        app.delete('/userreview/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await AllReviewsCollection.deleteOne(query);
+            res.send(result);
+        })
+
+
+        // Updating a Review
+        app.put('/updatereview/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const review = req.body;
+            const option = { upsert: true };
+            const updatedReview = {
+                $set: {
+                    name: review.name,
+                    rating: review.rating,
+                    photoUrl: review.photoUrl,
+                    addedReview: review.addedReview,
+                    time: review.time
+                }
+            }
+            const result = await AllReviewsCollection.updateOne(filter, updatedReview, option);
+            res.send(result)
+
+        })
+
+
+
+        // Getting  a review by id
+        app.get('/updatereview/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const review = await AllReviewsCollection.findOne(query);
+            res.send(review)
+        })
+
+
         // get service Created By user
         app.get('/userservice', async (req, res) => {
             let query = {};
@@ -83,7 +136,13 @@ async function run() {
             res.send(services);
         })
 
-
+        // get all the reviews
+        app.get('/allreviews', async (req, res) => {
+            const query = {};
+            const cursor = AllReviewsCollection.find(query).limit(3);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
 
     }
 
